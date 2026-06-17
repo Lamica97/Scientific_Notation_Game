@@ -458,7 +458,15 @@
 
     function updateDisplay() {
         document.getElementById('standardDisplay').innerText = baseValue.toLocaleString(undefined, {maximumFractionDigits: 15});
-        let currentA = baseValue / Math.pow(10, currentExponent);
+        
+        // Fix floating point issue by using integer powers of 10
+        let currentA;
+        if (currentExponent < 0) {
+            currentA = baseValue * Math.pow(10, Math.abs(currentExponent));
+        } else {
+            currentA = baseValue / Math.pow(10, currentExponent);
+        }
+        
         let formattedA = Number(currentA.toFixed(12)).toString();
         document.getElementById('weightDisplay').innerText = formattedA;
         document.getElementById('exponentDisplay').innerText = currentExponent;
