@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>เกมและเครื่องมือสัญกรณ์วิทยาศาสตร์</title>
     
     <!-- PWA & Offline Support for iPad/Mobile -->
@@ -45,6 +45,64 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             overflow: hidden; 
+        }
+
+        button, input, select {
+            touch-action: manipulation;
+        }
+
+        /* Drawing Overlay */
+        #drawingCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9000;
+        }
+        #drawingCanvas.active {
+            pointer-events: auto;
+            cursor: crosshair;
+        }
+        .drawing-toolbar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 9001;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            align-items: center;
+        }
+        .draw-btn {
+            font-family: 'Prompt', sans-serif;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        #toggleDrawBtn { background: var(--primary); color: white; }
+        #toggleDrawBtn.active { background: #ef4444; color: white; }
+        .clear-btn { background: #cbd5e1; color: #475569; }
+        .clear-btn:hover { background: #94a3b8; color: white; }
+        .color-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        .color-btn.active {
+            transform: scale(1.2);
+            border-color: #334155;
         }
 
         /* Tab Styles */
@@ -224,6 +282,18 @@
     </style>
 </head>
 <body>
+
+    <!-- Drawing Overlay -->
+    <div id="drawingToolbar" class="drawing-toolbar">
+        <button id="toggleDrawBtn" class="draw-btn" onclick="toggleDrawingMode()">✏️ เปิดโหมดเขียน</button>
+        <button id="clearDrawBtn" class="draw-btn clear-btn" onclick="clearCanvas()" style="display:none;">🗑️ ลบ</button>
+        <div id="colorPickerWrapper" style="display:none; align-items:center; gap: 5px; margin-left: 5px;">
+            <div class="color-btn active" style="background:#ef4444;" onclick="changeColor('#ef4444', this)"></div>
+            <div class="color-btn" style="background:#3b82f6;" onclick="changeColor('#3b82f6', this)"></div>
+            <div class="color-btn" style="background:#22c55e;" onclick="changeColor('#22c55e', this)"></div>
+        </div>
+    </div>
+    <canvas id="drawingCanvas"></canvas>
 
     <div class="tabs-header">
         <button id="tabBtn1" class="tab-btn active" onclick="switchTab('tab1')">🎯 ห้องเรียนสัญกรณ์</button>
@@ -684,6 +754,107 @@
                 .catch(err => console.log('Service Worker registration failed:', err));
         });
     }
+
+    // --- DRAWING OVERLAY LOGIC ---
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawingMode = false;
+    let isDrawing = false;
+    let drawColor = '#ef4444';
+    let lastX = 0;
+    let lastY = 0;
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function toggleDrawingMode() {
+        isDrawingMode = !isDrawingMode;
+        const btn = document.getElementById('toggleDrawBtn');
+        const clearBtn = document.getElementById('clearDrawBtn');
+        const colorWrapper = document.getElementById('colorPickerWrapper');
+        
+        if (isDrawingMode) {
+            canvas.classList.add('active');
+            btn.classList.add('active');
+            btn.innerHTML = '❌ ปิดโหมดเขียน';
+            clearBtn.style.display = 'block';
+            colorWrapper.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        } else {
+            canvas.classList.remove('active');
+            btn.classList.remove('active');
+            btn.innerHTML = '✏️ เปิดโหมดเขียน';
+            clearBtn.style.display = 'none';
+            colorWrapper.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
+
+    function changeColor(color, el) {
+        drawColor = color;
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function getPointerPos(e) {
+        if (e.touches && e.touches.length > 0) {
+            return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+        return { x: e.clientX, y: e.clientY };
+    }
+
+    function startDrawing(e) {
+        if (!isDrawingMode) return;
+        isDrawing = true;
+        const pos = getPointerPos(e);
+        lastX = pos.x;
+        lastY = pos.y;
+    }
+
+    function draw(e) {
+        if (!isDrawing || !isDrawingMode) return;
+        
+        // Prevent scroll on iOS when drawing
+        if (e.cancelable) e.preventDefault();
+
+        const pos = getPointerPos(e);
+        
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.strokeStyle = drawColor;
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+        
+        lastX = pos.x;
+        lastY = pos.y;
+    }
+
+    function stopDrawing() {
+        if (!isDrawingMode) return;
+        isDrawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchcancel', stopDrawing);
+
 </script>
 
 </body>
