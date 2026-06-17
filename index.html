@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกมบวกลบสัญกรณ์วิทยาศาสตร์: เปิดป้ายทายใจ</title>
+    <title>เกมและเครื่องมือสัญกรณ์วิทยาศาสตร์</title>
     
     <!-- PWA & Offline Support for iPad/Mobile -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -27,6 +27,10 @@
             --box-2: #fef3c7;
             --accent: #10b981;
             --warning: #f59e0b;
+            --number-color: #0284c7;
+            --number-bg: #e0f2fe;
+            --exponent-color: #dc2626;
+            --exponent-bg: #fee2e2;
         }
 
         body {
@@ -36,14 +40,78 @@
             margin: 0;
             padding: 10px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             overflow: hidden; 
         }
 
-        .container {
+        /* Tab Styles */
+        .tabs-header {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            background: white;
+            padding: 8px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+            margin-top: 5px;
+        }
+        
+        .tab-btn {
+            font-family: 'Prompt', sans-serif;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+        
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            height: calc(100vh - 85px);
+        }
+        
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* Container 1: ChangScienceNotation */
+        .chang-container {
+            max-width: 850px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 20px 35px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.8);
+            overflow-y: auto;
+        }
+
+        /* Container 2: Scientific_Notation_Game */
+        .game-container {
             max-width: 1100px;
             width: 100%;
             background: var(--card-bg);
@@ -53,232 +121,80 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            max-height: 98vh; 
         }
 
-        .header-section {
-            text-align: center;
-            margin-bottom: 10px;
-        }
+        /* Chang CSS */
+        .chang-container h1 { color: var(--primary); font-weight: 700; margin-bottom: 8px; font-size: 28px; letter-spacing: -0.5px; }
+        .chang-container .subtitle { color: #64748b; margin-bottom: 35px; font-size: 16px; font-weight: 300; }
+        .display-section { background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 20px; padding: 25px 20px; margin-bottom: 30px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; }
+        .label-text { font-size: 14px; color: #64748b; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .standard-form { font-family: 'Chakra Petch', sans-serif; font-size: 36px; font-weight: 700; color: #334155; letter-spacing: 1px; margin-bottom: 25px; word-break: break-all; }
+        .scientific-form { font-family: 'Chakra Petch', sans-serif; font-size: 52px; font-weight: 700; border-top: 2px dashed #cbd5e1; padding-top: 25px; width: 90%; margin: 0 auto; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .highlight-a { color: var(--number-color); background: var(--number-bg); padding: 6px 18px; border-radius: 14px; display: inline-block; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(2, 132, 199, 0.08); }
+        .highlight-n { color: var(--exponent-color); background: var(--exponent-bg); padding: 4px 14px; border-radius: 10px; font-size: 36px; display: inline-block; transform: translateY(-20px); box-shadow: 0 4px 6px rgba(220, 38, 38, 0.08); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .times-sign { color: #94a3b8; font-weight: 500; font-size: 42px; }
+        .base-ten { color: #475569; }
+        .control-section { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .n-controls { display: flex; align-items: center; gap: 20px; background: #fff7ed; padding: 16px 30px; border-radius: 18px; border: 2px solid #ffedd5; box-shadow: 0 4px 12px rgba(251, 146, 60, 0.05); }
+        .control-title { font-size: 16px; font-weight: 600; color: #c2410c; }
+        .chang-container button { font-family: 'Prompt', sans-serif; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; user-select: none; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .chang-container button:active { transform: scale(0.98); }
+        .n-btn { font-size: 16px; padding: 12px 24px; }
+        .n-btn.btn-up { background-color: #ef4444; }
+        .n-btn.btn-up:hover { background-color: #dc2626; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2); }
+        .n-btn.btn-down { background-color: #2563eb; }
+        .n-btn.btn-down:hover { background-color: #1d4ed8; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+        .preset-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .chang-container button.btn-secondary { background: #ffffff; color: #475569; border: 2px solid #e2e8f0; box-shadow: none; }
+        .chang-container button.btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; color: #1e293b; }
+        .input-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 15px; width: 100%; max-width: 600px; box-sizing: border-box; }
+        .input-card-title { font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 12px; }
+        .input-group { display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap; }
+        .input-custom { font-family: 'Prompt', sans-serif; padding: 10px 16px; font-size: 16px; border: 2px solid #e2e8f0; border-radius: 12px; width: 120px; text-align: center; outline: none; transition: border-color 0.2s; }
+        .input-custom:focus { border-color: var(--primary); }
+        .btn-submit { background: var(--primary); }
+        .btn-submit:hover { background: var(--primary-hover); }
+        .input-text-label { font-weight: 600; color: #64748b; font-size: 18px; }
+        .rule-box { margin-top: 30px; padding: 20px 25px; background: #f8fafc; border-left: 5px solid var(--primary); border-radius: 8px 16px 16px 8px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.01); }
+        .rule-box strong { color: var(--primary); font-size: 16px; display: block; margin-bottom: 10px; }
+        .rule-line { font-size: 15px; margin: 8px 0; display: flex; align-items: center; gap: 12px; color: #475569; }
+        .badge-left { background: #fee2e2; color: #ef4444; padding: 2px 8px; border-radius: 6px; font-weight: 600; font-size: 13px; }
+        .badge-right { background: #dbeafe; color: #2563eb; padding: 2px 8px; border-radius: 6px; font-weight: 600; font-size: 13px; }
 
-        h1 {
-            color: var(--primary);
-            font-weight: 700;
-            margin: 0 0 2px 0;
-            font-size: 22px;
-        }
-
-        .subtitle {
-            color: #64748b;
-            font-size: 14px;
-            margin: 0;
-        }
-
-        .layout-wrapper {
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .left-panel {
-            flex: 0 0 42%;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .right-panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .setup-section {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-        }
-
-        .math-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .num-block {
-            padding: 6px;
-            border-radius: 10px;
-            border: 2px solid transparent;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        /* Game CSS */
+        .game-container .header-section { text-align: center; margin-bottom: 10px; }
+        .game-container h1 { color: var(--primary); font-weight: 700; margin: 0 0 2px 0; font-size: 22px; }
+        .game-container .subtitle { color: #64748b; font-size: 14px; margin: 0; }
+        .layout-wrapper { display: flex; gap: 15px; align-items: flex-start; flex: 1; overflow: hidden; }
+        .left-panel { flex: 0 0 42%; display: flex; flex-direction: column; gap: 10px; }
+        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-right: 5px; height: 100%;}
+        .setup-section { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center; }
+        .math-row { display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .num-block { padding: 6px; border-radius: 10px; border: 2px solid transparent; display: flex; align-items: center; gap: 4px; }
         .block-a { background-color: var(--box-1); border-color: #bae6fd; }
         .block-b { background-color: var(--box-2); border-color: #fde68a; }
-
-        .input-num {
-            font-family: 'Prompt', sans-serif;
-            padding: 4px 6px;
-            font-size: 14px;
-            border: 2px solid #cbd5e1;
-            border-radius: 6px;
-            width: 55px;
-            text-align: center;
-        }
-
-        .select-op {
-            font-family: 'Prompt', sans-serif;
-            padding: 4px 6px;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 6px;
-            border: 2px solid var(--primary);
-            cursor: pointer;
-        }
-
-        .original-equation-box {
-            background: #ffffff;
-            border: 2px dashed #94a3b8;
-            border-radius: 12px;
-            padding: 15px 10px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .equation-label {
-            font-weight: 700;
-            color: #475569;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        /* ปรับให้อยู่บรรทัดเดียวกัน */
-        .top-equation-layout {
-            display: flex;
-            flex-direction: row; 
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        #originalEquationDisplay {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .eq-box {
-            font-family: 'Chakra Petch', sans-serif;
-            font-size: 20px; /* ปรับให้พอดีแนวนอน */
-            font-weight: 700;
-            padding: 6px 10px;
-            border-radius: 10px;
-            display: inline-block;
-            margin: 0;
-            line-height: 1.2;
-        }
+        .input-num { font-family: 'Prompt', sans-serif; padding: 4px 6px; font-size: 14px; border: 2px solid #cbd5e1; border-radius: 6px; width: 55px; text-align: center; }
+        .select-op { font-family: 'Prompt', sans-serif; padding: 4px 6px; font-size: 14px; font-weight: bold; border-radius: 6px; border: 2px solid var(--primary); cursor: pointer; }
+        .original-equation-box { background: #ffffff; border: 2px dashed #94a3b8; border-radius: 12px; padding: 15px 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .equation-label { font-weight: 700; color: #475569; font-size: 14px; margin-bottom: 10px; }
+        .top-equation-layout { display: flex; flex-direction: row; justify-content: center; align-items: center; flex-wrap: wrap; gap: 6px; }
+        #originalEquationDisplay { display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .eq-box { font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700; padding: 6px 10px; border-radius: 10px; display: inline-block; margin: 0; line-height: 1.2; }
         .eq-box.part-a { background-color: var(--box-1); border: 2px dashed #7dd3fc; }
         .eq-box.part-b { background-color: var(--box-2); border: 2px dashed #fcd34d; }
         .eq-op { font-size: 22px; font-weight: bold; color: #475569; margin: 0; }
-
-        .eq-result-box {
-            font-family: 'Chakra Petch', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 10px;
-            background-color: #f0fdf4;
-            border: 2px dashed #10b981;
-            color: #10b981;
-            min-width: 80px;
-            text-align: center;
-        }
+        .eq-result-box { font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700; padding: 6px 12px; border-radius: 10px; background-color: #f0fdf4; border: 2px dashed #10b981; color: #10b981; min-width: 80px; text-align: center; }
         .eq-result-placeholder { color: #cbd5e1; font-family: 'Prompt', sans-serif; }
-
-        /* ------------- ดีไซน์ฝั่งขวา ------------- */
-        .step-box {
-            background: white;
-            border-radius: 10px;
-            padding: 10px 12px;
-            text-align: left;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            border: 1px solid #e2e8f0;
-            position: relative;
-        }
-
-        .step-title {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-        }
-
-        .math-text {
-            font-family: 'Chakra Petch', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            text-align: center;
-            letter-spacing: 0.5px;
-            margin: 0;
-            line-height: 1.2;
-        }
-
+        .step-box { background: white; border-radius: 10px; padding: 10px 12px; text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; position: relative; flex-shrink: 0; }
+        .step-title { font-weight: 700; color: var(--primary); font-size: 13px; display: flex; align-items: center; }
+        .math-text { font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700; text-align: center; letter-spacing: 0.5px; margin: 0; line-height: 1.2; }
         sup { font-size: 0.6em; vertical-align: super; line-height: 0; }
-
-        .step1-split-container {
-            display: flex;
-            justify-content: center;
-            align-items: stretch;
-            gap: 8px;
-            margin-top: 5px;
-            width: 100%;
-        }
-
-        .split-box {
-            position: relative;
-            border-radius: 8px;
-            padding: 6px 10px;
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
+        .step1-split-container { display: flex; justify-content: center; align-items: stretch; gap: 8px; margin-top: 5px; width: 100%; }
+        .split-box { position: relative; border-radius: 8px; padding: 6px 10px; flex: 1; display: flex; justify-content: center; align-items: center; }
         .split-box.part-a { background-color: var(--box-1); border: 2px dashed #7dd3fc; }
         .split-box.part-b { background-color: var(--box-2); border: 2px dashed #fcd34d; }
         .split-box.part-op { background-color: #f1f5f9; border: 2px dashed #cbd5e1; flex: 0 0 35px; }
-
-        .blur-cover-mini {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            color: white;
-            font-family: 'Prompt', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-            z-index: 10;
-        }
-
+        .blur-cover-mini { position: absolute; top: 0; left: 0; width: 100%; height: 100%; color: white; font-family: 'Prompt', sans-serif; font-size: 13px; font-weight: 600; display: flex; justify-content: center; align-items: center; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; user-select: none; z-index: 10; }
         .cover-default { background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%); }
         .cover-default:hover { background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); }
         .cover-success { background: linear-gradient(135deg, #a7f3d0 0%, #059669 100%); }
@@ -286,223 +202,299 @@
         .cover-warning { background: linear-gradient(135deg, #fcd34d 0%, #d97706 100%); }
         .cover-warning:hover { background: linear-gradient(135deg, #fbbf24 0%, #b45309 100%); }
         .blur-cover-mini.revealed { display: none; }
-
-        .choice-buttons {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            margin-bottom: 2px;
-            margin-top: 5px;
-        }
-
-        button {
-            font-family: 'Prompt', sans-serif;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            font-size: 13px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        button:active { transform: scale(0.98); }
-
+        .choice-buttons { display: flex; gap: 8px; justify-content: center; margin-bottom: 2px; margin-top: 5px; }
+        .game-container button { font-family: 'Prompt', sans-serif; color: white; border: none; padding: 6px 12px; font-size: 13px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .game-container button:active { transform: scale(0.98); }
         .btn-primary { background-color: var(--primary); margin-top: 5px; }
         .btn-reset { background-color: #64748b; font-size: 11px; padding: 3px 8px; }
-        
         .btn-action-green { background-color: var(--accent); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
         .btn-action-green:hover { background-color: #059669; }
         .btn-action-orange { background-color: var(--warning); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2); }
         .btn-action-orange:hover { background-color: #d97706; }
-
-        .btn-choice {
-            background-color: #cbd5e1;
-            color: #475569;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+        .btn-choice { background-color: #cbd5e1; color: #475569; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .btn-choice:hover { background-color: #94a3b8; color: #ffffff; }
-        .btn-choice.active {
-            background-color: var(--primary);
-            color: #ffffff;
-            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
-        }
-
+        .btn-choice.active { background-color: var(--primary); color: #ffffff; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3); }
         .highlight { padding: 0 4px; border-radius: 4px; display: inline-block; }
         .hl-a { color: #0369a1; }
         .hl-b { color: #b45309; }
         .hl-same { background-color: #dcfce7; color: #15803d; }
-
-        .top-right-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-        
-        .msg-text {
-            text-align: center; 
-            margin-top: 5px; 
-            font-size: 13px; 
-            font-weight: 500;
-        }
-
-        .decision-area {
-            text-align: center;
-            margin: 0;
-            padding: 8px;
-            background: #ffffff;
-            border-radius: 10px;
-            border: 2px dashed #94a3b8;
-        }
+        .top-right-actions { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .msg-text { text-align: center; margin-top: 5px; font-size: 13px; font-weight: 500; }
+        .decision-area { text-align: center; margin: 0; padding: 8px; background: #ffffff; border-radius: 10px; border: 2px dashed #94a3b8; flex-shrink: 0; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header-section">
-        <h1>เกมบวก-ลบสัญกรณ์วิทยาศาสตร์</h1>
-        <div class="subtitle">กิจกรรมเปิดป้ายเฉลยทีละขั้นตอน</div>
+    <div class="tabs-header">
+        <button id="tabBtn1" class="tab-btn active" onclick="switchTab('tab1')">🎯 ห้องเรียนสัญกรณ์</button>
+        <button id="tabBtn2" class="tab-btn" onclick="switchTab('tab2')">🎮 เกมบวกลบสัญกรณ์</button>
     </div>
 
-    <div class="layout-wrapper">
-        
-        <div class="left-panel">
-            <div class="setup-section">
-                <div style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px;">ตั้งโจทย์ใหม่</div>
-                <div class="math-row">
-                    <div class="num-block block-a">
-                        <input type="number" id="a1" class="input-num" value="3.5" step="any">
-                        <span>×10</span>
-                        <input type="number" id="n1" class="input-num" style="width:40px;" value="5" step="any">
-                    </div>
-                    <select id="operator" class="select-op" onchange="resetAndCalculate()">
-                        <option value="+">+</option>
-                        <option value="-">-</option>
-                    </select>
-                    <div class="num-block block-b">
-                        <input type="number" id="a2" class="input-num" value="1.2" step="any">
-                        <span>×10</span>
-                        <input type="number" id="n2" class="input-num" style="width:40px;" value="4" step="any">
-                    </div>
+    <!-- TAB 1: ChangScienceNotation -->
+    <div id="tab1" class="tab-content active">
+        <div class="chang-container">
+            <h1>ระบบจำลองสัญกรณ์วิทยาศาสตร์</h1>
+            <div class="subtitle">เครื่องมือประกอบการสอนวิชาคณิตศาสตร์และวิทยาศาสตร์</div>
+
+            <div class="display-section">
+                <div>
+                    <div class="label-text">ค่าคงที่ของตัวเลข (Value)</div>
+                    <div class="standard-form" id="standardDisplay">3,500</div>
                 </div>
-                <button class="btn-primary" onclick="resetAndCalculate()">คำนวณโจทย์</button>
+                
+                <div class="scientific-form">
+                    <span class="highlight-a" id="weightDisplay">3.5</span>
+                    <span class="times-sign">×</span>
+                    <span class="base-ten">10</span>
+                    <span class="highlight-n" id="exponentDisplay">3</span>
+                </div>
             </div>
 
-            <div class="original-equation-box">
-                <div class="equation-label">โจทย์ปัญหาและผลลัพธ์:</div>
-                <div class="top-equation-layout">
-                    <div id="originalEquationDisplay">-- รอตั้งโจทย์ --</div>
-                    <div class="eq-op">=</div>
-                    <div class="eq-result-box">
-                        <span class="eq-result-placeholder" id="topAnswerPlaceholder">?</span>
-                        <span id="topAnswerContent" style="display: none;">--</span>
+            <div class="control-section">
+                
+                <div class="n-controls">
+                    <span class="control-title">สั่งปรับเลขชี้กำลัง:</span>
+                    <button class="n-btn btn-down" onclick="changeExponent(-1)">n ลดลง (-1)</button>
+                    <button class="n-btn btn-up" onclick="changeExponent(1)">n เพิ่มขึ้น (+1)</button>
+                </div>
+
+                <div class="input-card">
+                    <div class="input-card-title">✍️ ตั้งโจทย์เริ่มต้นในรูปสัญกรณ์ (A × 10ⁿ)</div>
+                    <div class="input-group">
+                        <input type="number" id="inputA" class="input-custom" placeholder="ค่า A" step="any" value="35">
+                        <span class="input-text-label">× 10</span>
+                        <input type="number" id="inputN" class="input-custom" placeholder="ค่า n" step="any" value="2">
+                        <button class="btn-submit" onclick="setupScientificInput()">สร้างโจทย์</button>
                     </div>
+                </div>
+
+                <div class="preset-buttons">
+                    <button class="btn-secondary" onclick="loadPresetValue(3500, 3)">ค่าเริ่มต้น: 3,500</button>
+                    <button class="btn-secondary" onclick="loadPresetValue(9300000, 6)">ค่าเริ่มต้น: 9,300,000</button>
+                    <button class="btn-secondary" onclick="loadPresetValue(0.00025, -4)">ค่าเริ่มต้น: 0.00025</button>
+                </div>
+            </div>
+
+            <div class="rule-box">
+                <strong>💡 ชวนนักเรียนสังเกตและสรุปกฎ:</strong>
+                <div class="rule-line">
+                    <span class="badge-left">เมื่อกดปุ่มแดง</span> 
+                    <span>ถ้าเลขชี้กำลัง (n) <b>เพิ่มขึ้น</b> ➔ ตัวเลขด้านหน้า (A) จะถูกบีบให้เลื่อนจุดไปทาง <b>ซ้าย (←)</b></span>
+                </div>
+                <div class="rule-line">
+                    <span class="badge-right">เมื่อกดปุ่มน้ำเงิน</span> 
+                    <span>ถ้าเลขชี้กำลัง (n) <b>ลดลง</b> ➔ ตัวเลขด้านหน้า (A) จะถูกขยายให้เลื่อนจุดไปทาง <b>ขวา (→)</b></span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="right-panel">
-            <div class="step-box">
-                <div class="top-right-actions">
-                    <div class="step-title"><span>Step 1:</span> ปรับฐาน 10ⁿ ให้เท่ากัน</div>
-                    <button class="btn-reset" onclick="hideStep1Covers()">ซ่อนคำตอบ</button>
-                </div>
+    <!-- TAB 2: Scientific_Notation_Game -->
+    <div id="tab2" class="tab-content" style="display: none;">
+        <div class="game-container">
+            <div class="header-section">
+                <h1>เกมบวก-ลบสัญกรณ์วิทยาศาสตร์</h1>
+                <div class="subtitle">กิจกรรมเปิดป้ายเฉลยทีละขั้นตอน</div>
+            </div>
+
+            <div class="layout-wrapper">
                 
-                <div class="choice-buttons">
-                    <button id="btnTarget1" class="btn-choice" onclick="changeMode('targetN1')">ยึดตัวหน้า</button>
-                    <button id="btnTarget2" class="btn-choice" onclick="changeMode('targetN2')">ยึดตัวหลัง</button>
-                </div>
-
-                <div id="step1_message" class="msg-text" style="color:#94a3b8;">-- กดเลือกปุ่มด้านบน --</div>
-
-                <div id="step1_split_container" class="step1-split-container" style="display: none;">
-                    <div class="split-box part-a">
-                        <div class="math-text" id="s1_part1">--</div>
-                        <div id="cover1_1" class="blur-cover-mini cover-default" onclick="revealCover('cover1_1')">❔ พจน์หน้า</div>
+                <div class="left-panel">
+                    <div class="setup-section">
+                        <div style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px;">ตั้งโจทย์ใหม่</div>
+                        <div class="math-row">
+                            <div class="num-block block-a">
+                                <input type="number" id="a1" class="input-num" value="3.5" step="any">
+                                <span>×10</span>
+                                <input type="number" id="n1" class="input-num" style="width:40px;" value="5" step="any">
+                            </div>
+                            <select id="operator" class="select-op" onchange="resetAndCalculate()">
+                                <option value="+">+</option>
+                                <option value="-">-</option>
+                            </select>
+                            <div class="num-block block-b">
+                                <input type="number" id="a2" class="input-num" value="1.2" step="any">
+                                <span>×10</span>
+                                <input type="number" id="n2" class="input-num" style="width:40px;" value="4" step="any">
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="resetAndCalculate()">คำนวณโจทย์</button>
                     </div>
-                    <div class="split-box part-op">
-                        <div class="math-text" id="s1_op">--</div>
-                        <div id="cover1_op" class="blur-cover-mini cover-default" onclick="revealCover('cover1_op')">❔</div>
-                    </div>
-                    <div class="split-box part-b">
-                        <div class="math-text" id="s1_part2">--</div>
-                        <div id="cover1_2" class="blur-cover-mini cover-default" onclick="revealCover('cover1_2')">❔ พจน์หลัง</div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="step-box">
-                <div class="top-right-actions">
-                    <div class="step-title"><span>Step 2:</span> ดึงตัวร่วม</div>
-                    <button class="btn-reset" onclick="hideStep2Covers()">ซ่อนคำตอบ</button>
-                </div>
-
-                <div id="step2_message" class="msg-text" style="color:#cbd5e1;">-- รอการเลือกฐาน --</div>
-
-                <div id="step2_split_container" class="step1-split-container" style="display: none;">
-                    <div class="split-box" style="flex: 1.5; background: #ffffff; border: 2px dashed #94a3b8;">
-                        <div class="math-text" id="s2_part1">--</div>
-                        <div id="cover2_1" class="blur-cover-mini cover-default" onclick="revealCover('cover2_1')">❔ นำตัวเลขทำกัน</div>
-                    </div>
-                    <div class="split-box" style="background: #f0fdf4; border: 2px dashed #86efac; flex: 1;">
-                        <div class="math-text" id="s2_part2">--</div>
-                        <div id="cover2_2" class="blur-cover-mini cover-default" onclick="revealCover('cover2_2')">❔ ฐานร่วม</div>
+                    <div class="original-equation-box">
+                        <div class="equation-label">โจทย์ปัญหาและผลลัพธ์:</div>
+                        <div class="top-equation-layout">
+                            <div id="originalEquationDisplay">-- รอตั้งโจทย์ --</div>
+                            <div class="eq-op">=</div>
+                            <div class="eq-result-box">
+                                <span class="eq-result-placeholder" id="topAnswerPlaceholder">?</span>
+                                <span id="topAnswerContent" style="display: none;">--</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="step-box" id="step3_box">
-                <div class="top-right-actions">
-                    <div class="step-title" style="color: var(--primary);"><span>Step 3:</span> ผลลัพธ์</div>
-                    <button class="btn-reset" onclick="hideStep3Covers()">ซ่อนคำตอบ</button>
-                </div>
-                
-                <div id="step3_message" class="msg-text" style="color:#cbd5e1;">-- รอการเลือกฐาน --</div>
+                <div class="right-panel">
+                    <div class="step-box">
+                        <div class="top-right-actions">
+                            <div class="step-title"><span>Step 1:</span> ปรับฐาน 10ⁿ ให้เท่ากัน</div>
+                            <button class="btn-reset" onclick="hideStep1Covers()">ซ่อนคำตอบ</button>
+                        </div>
+                        
+                        <div class="choice-buttons">
+                            <button id="btnTarget1" class="btn-choice" onclick="changeMode('targetN1')">ยึดตัวหน้า</button>
+                            <button id="btnTarget2" class="btn-choice" onclick="changeMode('targetN2')">ยึดตัวหลัง</button>
+                        </div>
 
-                <div id="step3_split_container" class="step1-split-container" style="display: none;">
-                    <div class="split-box" style="background: #ffffff; border: 2px solid var(--primary); flex: 1;">
-                        <div class="math-text" id="s3_part1" style="color: var(--primary);">--</div>
-                        <div id="cover3_1" class="blur-cover-mini cover-default" onclick="revealCover('cover3_1')">❔ ตัวเลข</div>
+                        <div id="step1_message" class="msg-text" style="color:#94a3b8;">-- กดเลือกปุ่มด้านบน --</div>
+
+                        <div id="step1_split_container" class="step1-split-container" style="display: none;">
+                            <div class="split-box part-a">
+                                <div class="math-text" id="s1_part1">--</div>
+                                <div id="cover1_1" class="blur-cover-mini cover-default" onclick="revealCover('cover1_1')">❔ พจน์หน้า</div>
+                            </div>
+                            <div class="split-box part-op">
+                                <div class="math-text" id="s1_op">--</div>
+                                <div id="cover1_op" class="blur-cover-mini cover-default" onclick="revealCover('cover1_op')">❔</div>
+                            </div>
+                            <div class="split-box part-b">
+                                <div class="math-text" id="s1_part2">--</div>
+                                <div id="cover1_2" class="blur-cover-mini cover-default" onclick="revealCover('cover1_2')">❔ พจน์หลัง</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="split-box" style="background: #ffffff; border: 2px solid var(--primary); flex: 1;">
-                        <div class="math-text" id="s3_part2" style="color: var(--primary);">--</div>
-                        <div id="cover3_2" class="blur-cover-mini cover-default" onclick="revealCover('cover3_2')">❔ ฐาน 10</div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="decision-area" id="decision_area" style="display: none;">
-                <div style="font-weight: 700; color: #475569; margin-bottom: 5px; font-size: 13px;">
-                    🤔 เป็นสัญกรณ์ที่ถูกต้องหรือยัง?
-                </div>
-                <div style="display: flex; justify-content: center; gap: 10px;">
-                    <button id="btn_answer" class="btn-action-green" onclick="checkDecision('answer')">✅ ตอบเลย</button>
-                    <button id="btn_shift" class="btn-action-orange" onclick="checkDecision('shift')">➡️ เลื่อนจุดต่อ</button>
-                </div>
-            </div>
+                    <div class="step-box">
+                        <div class="top-right-actions">
+                            <div class="step-title"><span>Step 2:</span> ดึงตัวร่วม</div>
+                            <button class="btn-reset" onclick="hideStep2Covers()">ซ่อนคำตอบ</button>
+                        </div>
 
-            <div class="step-box" id="step4_box" style="display: none; border-bottom: 3px solid var(--warning);">
-                <div class="top-right-actions">
-                    <div class="step-title" style="color: var(--warning);"><span>Step 4:</span> จัดรูปใหม่</div>
-                    <button class="btn-reset" onclick="hideStep4Covers()">ซ่อนคำตอบ</button>
-                </div>
-                
-                <div id="step4_split_container" class="step1-split-container">
-                    <div class="split-box" style="background: #ffffff; border: 2px solid var(--warning); flex: 1;">
-                        <div class="math-text" id="s4_part1" style="color: #b45309;">--</div>
-                        <div id="cover4_1" class="blur-cover-mini cover-warning" onclick="revealCover('cover4_1')">❔ เลขใหม่</div>
-                    </div>
-                    <div class="split-box" style="background: #ffffff; border: 2px solid var(--warning); flex: 1;">
-                        <div class="math-text" id="s4_part2" style="color: #b45309;">--</div>
-                        <div id="cover4_2" class="blur-cover-mini cover-warning" onclick="revealCover('cover4_2')">❔ ฐานใหม่</div>
-                    </div>
-                </div>
-            </div>
+                        <div id="step2_message" class="msg-text" style="color:#cbd5e1;">-- รอการเลือกฐาน --</div>
 
-        </div> </div> </div>
+                        <div id="step2_split_container" class="step1-split-container" style="display: none;">
+                            <div class="split-box" style="flex: 1.5; background: #ffffff; border: 2px dashed #94a3b8;">
+                                <div class="math-text" id="s2_part1">--</div>
+                                <div id="cover2_1" class="blur-cover-mini cover-default" onclick="revealCover('cover2_1')">❔ นำตัวเลขทำกัน</div>
+                            </div>
+                            <div class="split-box" style="background: #f0fdf4; border: 2px dashed #86efac; flex: 1;">
+                                <div class="math-text" id="s2_part2">--</div>
+                                <div id="cover2_2" class="blur-cover-mini cover-default" onclick="revealCover('cover2_2')">❔ ฐานร่วม</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-box" id="step3_box">
+                        <div class="top-right-actions">
+                            <div class="step-title" style="color: var(--primary);"><span>Step 3:</span> ผลลัพธ์</div>
+                            <button class="btn-reset" onclick="hideStep3Covers()">ซ่อนคำตอบ</button>
+                        </div>
+                        
+                        <div id="step3_message" class="msg-text" style="color:#cbd5e1;">-- รอการเลือกฐาน --</div>
+
+                        <div id="step3_split_container" class="step1-split-container" style="display: none;">
+                            <div class="split-box" style="background: #ffffff; border: 2px solid var(--primary); flex: 1;">
+                                <div class="math-text" id="s3_part1" style="color: var(--primary);">--</div>
+                                <div id="cover3_1" class="blur-cover-mini cover-default" onclick="revealCover('cover3_1')">❔ ตัวเลข</div>
+                            </div>
+                            <div class="split-box" style="background: #ffffff; border: 2px solid var(--primary); flex: 1;">
+                                <div class="math-text" id="s3_part2" style="color: var(--primary);">--</div>
+                                <div id="cover3_2" class="blur-cover-mini cover-default" onclick="revealCover('cover3_2')">❔ ฐาน 10</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="decision-area" id="decision_area" style="display: none;">
+                        <div style="font-weight: 700; color: #475569; margin-bottom: 5px; font-size: 13px;">
+                            🤔 เป็นสัญกรณ์ที่ถูกต้องหรือยัง?
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 10px;">
+                            <button id="btn_answer" class="btn-action-green" onclick="checkDecision('answer')">✅ ตอบเลย</button>
+                            <button id="btn_shift" class="btn-action-orange" onclick="checkDecision('shift')">➡️ เลื่อนจุดต่อ</button>
+                        </div>
+                    </div>
+
+                    <div class="step-box" id="step4_box" style="display: none; border-bottom: 3px solid var(--warning);">
+                        <div class="top-right-actions">
+                            <div class="step-title" style="color: var(--warning);"><span>Step 4:</span> จัดรูปใหม่</div>
+                            <button class="btn-reset" onclick="hideStep4Covers()">ซ่อนคำตอบ</button>
+                        </div>
+                        
+                        <div id="step4_split_container" class="step1-split-container">
+                            <div class="split-box" style="background: #ffffff; border: 2px solid var(--warning); flex: 1;">
+                                <div class="math-text" id="s4_part1" style="color: #b45309;">--</div>
+                                <div id="cover4_1" class="blur-cover-mini cover-warning" onclick="revealCover('cover4_1')">❔ เลขใหม่</div>
+                            </div>
+                            <div class="split-box" style="background: #ffffff; border: 2px solid var(--warning); flex: 1;">
+                                <div class="math-text" id="s4_part2" style="color: #b45309;">--</div>
+                                <div id="cover4_2" class="blur-cover-mini cover-warning" onclick="revealCover('cover4_2')">❔ ฐานใหม่</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> 
+            </div> 
+        </div>
+    </div>
 
 <script>
+    // --- TAB SWITCH LOGIC ---
+    function switchTab(tabId) {
+        document.getElementById('tab1').style.display = 'none';
+        document.getElementById('tab1').classList.remove('active');
+        document.getElementById('tab2').style.display = 'none';
+        document.getElementById('tab2').classList.remove('active');
+        
+        document.getElementById('tabBtn1').classList.remove('active');
+        document.getElementById('tabBtn2').classList.remove('active');
+
+        document.getElementById(tabId).style.display = 'flex';
+        document.getElementById(tabId).classList.add('active');
+        
+        if (tabId === 'tab1') {
+            document.getElementById('tabBtn1').classList.add('active');
+        } else {
+            document.getElementById('tabBtn2').classList.add('active');
+        }
+    }
+
+    // --- TAB 1 (ChangScienceNotation) LOGIC ---
+    let baseValue = 3500;
+    let currentExponent = 3;
+
+    function updateDisplay() {
+        document.getElementById('standardDisplay').innerText = baseValue.toLocaleString(undefined, {maximumFractionDigits: 15});
+        let currentA = baseValue / Math.pow(10, currentExponent);
+        let formattedA = Number(currentA.toFixed(12)).toString();
+        document.getElementById('weightDisplay').innerText = formattedA;
+        document.getElementById('exponentDisplay').innerText = currentExponent;
+    }
+
+    function changeExponent(amount) {
+        currentExponent += amount;
+        updateDisplay();
+    }
+
+    function loadPresetValue(value, exp) {
+        baseValue = value;
+        currentExponent = exp;
+        updateDisplay();
+    }
+
+    function setupScientificInput() {
+        let inputA = parseFloat(document.getElementById('inputA').value);
+        let inputN = parseInt(document.getElementById('inputN').value);
+
+        if (!isNaN(inputA) && !isNaN(inputN)) {
+            baseValue = inputA * Math.pow(10, inputN);
+            currentExponent = inputN;
+            updateDisplay();
+        }
+    }
+
+    loadPresetValue(3500, 3);
+
+    // --- TAB 2 (Scientific_Notation_Game) LOGIC ---
     let currentMode = null;
     let finalAnsTopHTML = "";
     let needsShiftGlobal = false;
@@ -603,7 +595,6 @@
         let strA1_orig = Number(A1.toFixed(10)).toString();
         let strA2_orig = Number(A2.toFixed(10)).toString();
 
-        // แก้ไขให้กล่องโจทย์ใช้แท็ก span แทน div เพื่อให้อยู่บรรทัดเดียวกัน
         document.getElementById('originalEquationDisplay').innerHTML = 
             `<span class="eq-box part-a">(<span style="color:#0369a1">${strA1_orig}</span> <span style="color:#334155">× <span class="highlight hl-same">10<sup>${N1}</sup></span></span>)</span>
              <span class="eq-op">${op}</span>
