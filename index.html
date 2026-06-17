@@ -467,7 +467,11 @@
             currentA = baseValue / Math.pow(10, currentExponent);
         }
         
-        let formattedA = Number(currentA.toFixed(12)).toString();
+        let formattedA = currentA.toFixed(15);
+        if (formattedA.includes('.')) {
+            formattedA = formattedA.replace(/0+$/, '').replace(/\.$/, '');
+        }
+        
         document.getElementById('weightDisplay').innerText = formattedA;
         document.getElementById('exponentDisplay').innerText = currentExponent;
     }
