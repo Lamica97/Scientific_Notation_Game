@@ -714,16 +714,7 @@
         
         let str = num.toString();
         
-        // Only use toFixed(20) if the browser converted it to scientific notation (e.g., 8.3e-7)
-        // This prevents exposing floating-point noise (like 0.1000...555) for normal numbers
-        if (str.includes('e') || str.includes('E')) {
-            str = num.toFixed(20);
-            if (str.includes('.')) {
-                str = str.replace(/0+$/, '').replace(/\.$/, '');
-            }
-        }
-        
-        if (useCommas) {
+        if (useCommas && !str.includes('e') && !str.includes('E')) {
             let parts = str.split('.');
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             return parts.join('.');
