@@ -51,60 +51,6 @@
             touch-action: manipulation;
         }
 
-        /* Drawing Overlay */
-        #drawingCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 9000;
-        }
-        #drawingCanvas.active {
-            pointer-events: auto;
-            cursor: crosshair;
-        }
-        .drawing-toolbar {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 9001;
-            background: white;
-            padding: 8px 12px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            align-items: center;
-        }
-        .draw-btn {
-            font-family: 'Prompt', sans-serif;
-            font-size: 14px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        #toggleDrawBtn { background: var(--primary); color: white; }
-        #toggleDrawBtn.active { background: #ef4444; color: white; }
-        .clear-btn { background: #cbd5e1; color: #475569; }
-        .clear-btn:hover { background: #94a3b8; color: white; }
-        .color-btn {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: transform 0.2s;
-        }
-        .color-btn.active {
-            transform: scale(1.2);
-            border-color: #334155;
-        }
-
         /* Tab Styles */
         .tabs-header {
             display: flex;
@@ -282,18 +228,6 @@
     </style>
 </head>
 <body>
-
-    <!-- Drawing Overlay -->
-    <div id="drawingToolbar" class="drawing-toolbar">
-        <button id="toggleDrawBtn" class="draw-btn" onclick="toggleDrawingMode()">✏️ เปิดโหมดเขียน</button>
-        <button id="clearDrawBtn" class="draw-btn clear-btn" onclick="clearCanvas()" style="display:none;">🗑️ ลบ</button>
-        <div id="colorPickerWrapper" style="display:none; align-items:center; gap: 5px; margin-left: 5px;">
-            <div class="color-btn active" style="background:#ef4444;" onclick="changeColor('#ef4444', this)"></div>
-            <div class="color-btn" style="background:#3b82f6;" onclick="changeColor('#3b82f6', this)"></div>
-            <div class="color-btn" style="background:#22c55e;" onclick="changeColor('#22c55e', this)"></div>
-        </div>
-    </div>
-    <canvas id="drawingCanvas"></canvas>
 
     <div class="tabs-header">
         <button id="tabBtn1" class="tab-btn active" onclick="switchTab('tab1')">🎯 ห้องเรียนสัญกรณ์</button>
@@ -527,7 +461,7 @@
     let currentExponent = 0;
 
     function updateDisplay() {
-        document.getElementById('standardDisplay').innerText = baseValue.toLocaleString(undefined, {maximumFractionDigits: 15});
+        document.getElementById('standardDisplay').innerText = formatNoE(baseValue, true);
         
         // Fix floating point issue by using integer powers of 10
         let currentA;
@@ -536,13 +470,9 @@
         } else {
             currentA = baseValue / Math.pow(10, currentExponent);
         }
+        currentA = cleanFloat(currentA);
         
-        let formattedA = currentA.toFixed(15);
-        if (formattedA.includes('.')) {
-            formattedA = formattedA.replace(/0+$/, '').replace(/\.$/, '');
-        }
-        
-        document.getElementById('weightDisplay').innerText = formattedA;
+        document.getElementById('weightDisplay').innerText = formatNoE(currentA);
         document.getElementById('exponentDisplay').innerText = currentExponent;
     }
 
@@ -562,7 +492,12 @@
         let inputN = parseInt(document.getElementById('inputN').value);
 
         if (!isNaN(inputA) && !isNaN(inputN)) {
-            baseValue = inputA * Math.pow(10, inputN);
+            if (inputN < 0) {
+                baseValue = inputA / Math.pow(10, Math.abs(inputN));
+            } else {
+                baseValue = inputA * Math.pow(10, inputN);
+            }
+            baseValue = cleanFloat(baseValue);
             currentExponent = inputN;
             updateDisplay();
         }
@@ -668,8 +603,8 @@
             alert("กรุณากรอกตัวเลขให้ครบถ้วน"); return;
         }
 
-        let strA1_orig = Number(A1.toFixed(10)).toString();
-        let strA2_orig = Number(A2.toFixed(10)).toString();
+        let strA1_orig = formatNoE(A1);
+        let strA2_orig = formatNoE(A2);
 
         document.getElementById('originalEquationDisplay').innerHTML = 
             `<span class="eq-box part-a">(<span style="color:#0369a1">${strA1_orig}</span> <span style="color:#334155">× <span class="highlight hl-same">10<sup>${N1}</sup></span></span>)</span>
@@ -700,13 +635,19 @@
         let finalN = 0; let activeA1 = A1; let activeA2 = A2;
 
         if (currentMode === 'targetN1') {
-            finalN = N1; activeA2 = A2 / Math.pow(10, N1 - N2);
+            finalN = N1; 
+            let diff = N2 - N1;
+            activeA2 = diff > 0 ? A2 * Math.pow(10, diff) : A2 / Math.pow(10, Math.abs(diff));
+            activeA2 = cleanFloat(activeA2);
         } else {
-            finalN = N2; activeA1 = A1 / Math.pow(10, N2 - N1);
+            finalN = N2; 
+            let diff = N1 - N2;
+            activeA1 = diff > 0 ? A1 * Math.pow(10, diff) : A1 / Math.pow(10, Math.abs(diff));
+            activeA1 = cleanFloat(activeA1);
         }
 
-        let strA1 = Number(activeA1.toFixed(10)).toString();
-        let strA2 = Number(activeA2.toFixed(10)).toString();
+        let strA1 = formatNoE(activeA1);
+        let strA2 = formatNoE(activeA2);
 
         document.getElementById('s1_part1').innerHTML = `(<span class="highlight hl-a">${strA1}</span> × <span class="highlight hl-same">10<sup>${finalN}</sup></span>)`;
         document.getElementById('s1_op').innerHTML = op;
@@ -716,7 +657,8 @@
         document.getElementById('s2_part2').innerHTML = `× <span class="highlight hl-same">10<sup>${finalN}</sup></span>`;
 
         let combinedA = (op === '+') ? (activeA1 + activeA2) : (activeA1 - activeA2);
-        let strFinalA = Number(combinedA.toFixed(10)).toString();
+        combinedA = cleanFloat(combinedA);
+        let strFinalA = formatNoE(combinedA);
 
         document.getElementById('s3_part1').innerHTML = strFinalA;
         document.getElementById('s3_part2').innerHTML = `× 10<sup>${finalN}</sup>`;
@@ -727,11 +669,17 @@
         if (Math.abs(combinedA) >= 10 || (Math.abs(combinedA) < 1 && combinedA !== 0)) {
             needsShiftGlobal = true;
             let shift = Math.floor(Math.log10(Math.abs(standardA)));
-            standardA = standardA / Math.pow(10, shift);
+            let factor = Math.pow(10, Math.abs(shift));
+            if (shift > 0) {
+                standardA = standardA / factor;
+            } else {
+                standardA = standardA * factor;
+            }
+            standardA = cleanFloat(standardA);
             standardN += shift;
         }
         
-        let strStdA = Number(standardA.toFixed(10)).toString();
+        let strStdA = formatNoE(standardA);
 
         if (needsShiftGlobal) {
             document.getElementById('s4_part1').innerHTML = strStdA;
@@ -755,105 +703,25 @@
         });
     }
 
-    // --- DRAWING OVERLAY LOGIC ---
-    const canvas = document.getElementById('drawingCanvas');
-    const ctx = canvas.getContext('2d');
-    let isDrawingMode = false;
-    let isDrawing = false;
-    let drawColor = '#ef4444';
-    let lastX = 0;
-    let lastY = 0;
-
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    // --- MATH HELPERS ---
+    function cleanFloat(num) {
+        if (num === 0) return 0;
+        return parseFloat(num.toPrecision(14));
     }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
 
-    function toggleDrawingMode() {
-        isDrawingMode = !isDrawingMode;
-        const btn = document.getElementById('toggleDrawBtn');
-        const clearBtn = document.getElementById('clearDrawBtn');
-        const colorWrapper = document.getElementById('colorPickerWrapper');
-        
-        if (isDrawingMode) {
-            canvas.classList.add('active');
-            btn.classList.add('active');
-            btn.innerHTML = '❌ ปิดโหมดเขียน';
-            clearBtn.style.display = 'block';
-            colorWrapper.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        } else {
-            canvas.classList.remove('active');
-            btn.classList.remove('active');
-            btn.innerHTML = '✏️ เปิดโหมดเขียน';
-            clearBtn.style.display = 'none';
-            colorWrapper.style.display = 'none';
-            document.body.style.overflow = '';
+    function formatNoE(num, useCommas = false) {
+        if (num === 0) return "0";
+        let str = num.toFixed(20);
+        if (str.includes('.')) {
+            str = str.replace(/0+$/, '').replace(/\.$/, '');
         }
-    }
-
-    function changeColor(color, el) {
-        drawColor = color;
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-    }
-
-    function clearCanvas() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function getPointerPos(e) {
-        if (e.touches && e.touches.length > 0) {
-            return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        if (useCommas) {
+            let parts = str.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join('.');
         }
-        return { x: e.clientX, y: e.clientY };
+        return str;
     }
-
-    function startDrawing(e) {
-        if (!isDrawingMode) return;
-        isDrawing = true;
-        const pos = getPointerPos(e);
-        lastX = pos.x;
-        lastY = pos.y;
-    }
-
-    function draw(e) {
-        if (!isDrawing || !isDrawingMode) return;
-        
-        // Prevent scroll on iOS when drawing
-        if (e.cancelable) e.preventDefault();
-
-        const pos = getPointerPos(e);
-        
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.strokeStyle = drawColor;
-        ctx.lineWidth = 4;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.stroke();
-        
-        lastX = pos.x;
-        lastY = pos.y;
-    }
-
-    function stopDrawing() {
-        if (!isDrawingMode) return;
-        isDrawing = false;
-    }
-
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseout', stopDrawing);
-
-    canvas.addEventListener('touchstart', startDrawing, { passive: false });
-    canvas.addEventListener('touchmove', draw, { passive: false });
-    canvas.addEventListener('touchend', stopDrawing);
-    canvas.addEventListener('touchcancel', stopDrawing);
 
 </script>
 
