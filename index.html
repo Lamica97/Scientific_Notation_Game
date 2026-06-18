@@ -44,10 +44,9 @@
             align-items: center;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
-            overflow: hidden; 
         }
 
-        button, input, select {
+        button, select {
             touch-action: manipulation;
         }
 
@@ -265,9 +264,9 @@
                 <div class="input-card">
                     <div class="input-card-title">✍️ ตั้งโจทย์เริ่มต้นในรูปสัญกรณ์ (A × 10ⁿ)</div>
                     <div class="input-group">
-                        <input type="number" id="inputA" class="input-custom" placeholder="ค่า A" step="any" value="1">
+                        <input type="number" inputmode="decimal" id="inputA" class="input-custom" placeholder="ค่า A" step="any" value="1">
                         <span class="input-text-label">× 10</span>
-                        <input type="number" id="inputN" class="input-custom" placeholder="ค่า n" step="any" value="0">
+                        <input type="number" inputmode="numeric" id="inputN" class="input-custom" placeholder="ค่า n" step="any" value="0">
                         <button class="btn-submit" onclick="setupScientificInput()">สร้างโจทย์</button>
                     </div>
                 </div>
